@@ -19,7 +19,7 @@ services:
       - NOTION_VERIFICATION_TOKEN=<NOTION_VERIFICATION_TOKEN>
       - STRICT_MODE=<True or False> # Default = False
     ports:
-      - 8069:8069
+      - 8069:8000
     restart: unless-stopped
 ```
 | Variable                    | Description                                                                      | Required |
