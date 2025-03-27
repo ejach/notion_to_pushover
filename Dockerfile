@@ -11,6 +11,6 @@ RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/timezone \
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 8000
+EXPOSE 8069
 
 CMD gunicorn wsgi:app
