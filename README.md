@@ -16,13 +16,15 @@ services:
       - PUSHOVER_API_TOKEN=<PUSHOVER_API_TOKEN>
       - NOTION_API_KEY=<NOTION_API_KEY>
       - NOTION_VERIFICATION_TOKEN=<NOTION_VERIFICATION_TOKEN>
+      - STRICT_MODE=<True or False> # Default = False
     ports:
       - 8069:8069
     restart: unless-stopped
 ```
-| Variable                 | Description                                                                             | Required |
-|--------------------------|-----------------------------------------------------------------------------------------|--------|
-| `PUSHOVER_USER_KEY`               | The key associated with your Pushover account.                                          | ✅     |
-| `PUSHOVER_API_TOKEN`          | The token associated with your Pushover application.                                    | ✅     |
-| `NOTION_API_KEY`              | The API token associated with your Notion integration.                                  | ✅     |
-| `NOTION_VERIFICATION_TOKEN`      | The verification token sent when setting up your WebHook in Notion.                     | ✅      |
+| Variable                    | Description                                                                      | Required |
+|-----------------------------|----------------------------------------------------------------------------------|--------|
+| `PUSHOVER_USER_KEY`         | The key associated with your Pushover account.                                   | ✅      |
+| `PUSHOVER_API_TOKEN`        | The token associated with your Pushover application.                             | ✅      |
+| `NOTION_API_KEY`            | The API token associated with your Notion integration.                           | ✅      |
+| `NOTION_VERIFICATION_TOKEN` | The verification token sent when setting up your WebHook in Notion.              | ✅      |
+| `STRICT_MODE`               | Whether or not to verify requests using the `X-Notion-Signature` (Default False) | ❌       |

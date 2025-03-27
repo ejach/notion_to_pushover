@@ -18,6 +18,11 @@ NOTION_VERIFICATION_TOKEN = getenv('NOTION_VERIFICATION_TOKEN')
 notion = Client(auth=NOTION_API_KEY)
 
 
+def string_to_bool(v):
+    """Get a Boolean value from a string"""
+    return str(v).lower() in ('yes', 'true', 't', '1')
+
+
 def send_pushover_notification(message):
     """Send a notification via Pushover"""
     data = {
@@ -56,9 +61,10 @@ def is_trusted_request(req):
 
 @app.route('/', methods=['POST'])
 def notion_webhook():
-    if not is_trusted_request(request):
-        return jsonify({'error': 'Unauthorized'}), 401
     try:
+        strict_mode = string_to_bool(getenv('STRICT_MODE', 'False'))
+        if strict_mode and not is_trusted_request(request):
+            return jsonify({'error': 'Unauthorized'}), 401
         data = request.json
 
         # Extract the entity ID from the webhook payload
