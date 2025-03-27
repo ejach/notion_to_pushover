@@ -6,11 +6,13 @@ COPY . .
 
 COPY requirements.txt .
 
-RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/timezone \
-    && ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
+RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/timezone && \
+    ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime && \
+    pip install -r requirements.txt \
 
-RUN pip install --no-cache-dir -r requirements.txt
+ENV HOST=0.0.0.0
+ENV PORT=8069
 
-EXPOSE 8069
+EXPOSE $PORT
 
 CMD gunicorn wsgi:app
