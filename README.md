@@ -1,4 +1,5 @@
 ### notion_to_pushover
+[![PyPI](https://img.shields.io/pypi/v/gunicorn?logo=python&label=gunicorn&style=flat-square&color=FFD43B)](https://pypi.org/project/gunicorn/)
 [![PyPI](https://img.shields.io/pypi/v/notion-client?logo=python&label=notion-client&style=flat-square&color=FFD43B)](https://pypi.org/project/notion-client/)
 [![PyPI](https://img.shields.io/pypi/v/Requests?logo=python&label=Requests&style=flat-square&color=FFD43B)](https://pypi.org/project/Requests/)
 
