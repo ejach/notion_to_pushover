@@ -10,7 +10,7 @@ FROM alpine:latest
 
 WORKDIR /app
 
-COPY --from=build /app/app .
+COPY --from=builder /app/app .
 
 EXPOSE 8069
 
