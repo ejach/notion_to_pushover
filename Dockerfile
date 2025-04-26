@@ -1,17 +1,11 @@
-FROM golang:1.24.2-alpine AS build
+FROM golang:1.24.2-alpine
 
 WORKDIR /app
 
 COPY . .
 
-RUN go build -o app
-
-FROM alpine:latest
-
-WORKDIR /app
-
-COPY --from=build /app/app .
+RUN go build -o app .
 
 EXPOSE 8069
 
-ENTRYPOINT ["./app"]
+CMD ["./app"]
