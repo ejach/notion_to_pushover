@@ -102,7 +102,8 @@ func main() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 
 	app := fiber.New(fiber.Config{
-		Prefork: true,
+		Prefork:      false,
+		AppName:       "Notion to Pushover",
 	})
 
 	app.Post("/", func(c *fiber.Ctx) error {
