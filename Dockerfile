@@ -1,19 +1,17 @@
-FROM python:3.9-alpine
+FROM golang:1.22-alpine AS builder
 
-WORKDIR /
+WORKDIR /app
 
 COPY . .
 
-COPY requirements.txt .
+RUN go build -o app
 
-RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/timezone \
-    && ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
+FROM alpine:latest
 
-RUN pip install --no-cache-dir -r requirements.txt
+WORKDIR /app
 
-ENV HOST=0.0.0.0
-ENV PORT=8069
+COPY --from=builder /app/app .
 
-EXPOSE $PORT
+EXPOSE 8069
 
-CMD gunicorn wsgi:app
+ENTRYPOINT ["./app"]
