@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"crypto/hmac"
 	"crypto/sha256"
@@ -95,6 +96,51 @@ func sendPushoverNotification(title, message string) error {
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("Pushover API error: %s", bodyBytes)
 	}
+
+	return nil
+}
+
+func sendNtfyNotification(title, message string) error {
+	server := os.Getenv("NTFY_SERVER")
+	if server == "" {
+		server = "https://ntfy.sh"
+	}
+
+	topic := os.Getenv("NTFY_TOPIC")
+	if topic == "" {
+		return fmt.Errorf("NTFY_TOPIC environment variable is required")
+	}
+
+	req, err := http.NewRequest(
+		"POST",
+		fmt.Sprintf("%s/%s", server, topic),
+		bytes.NewBufferString(message),
+	)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Title", title)
+	req.Header.Set("Content-Type", "text/plain")
+
+	ntfyToken := os.Getenv("NTFY_BEARER_TOKEN")
+	if ntfyToken != "" {
+		req.Header.Set("Authorization", "Bearer "+ntfyToken)
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	bodyBytes, _ := io.ReadAll(resp.Body)
+	fmt.Println("ntfy response:", resp.StatusCode, string(bodyBytes))
+
+	if resp.StatusCode >= 300 {
+		return fmt.Errorf("ntfy error: %s", bodyBytes)
+	}
+
 	return nil
 }
 
@@ -102,8 +148,8 @@ func main() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 
 	app := fiber.New(fiber.Config{
-		Prefork:      false,
-		AppName:       "Notion to Pushover",
+		Prefork: false,
+		AppName: "Notion to Pushover",
 	})
 
 	app.Post("/", func(c *fiber.Ctx) error {
@@ -122,9 +168,31 @@ func main() {
 
 		title := getNotionPageTitle(data.Entity.ID)
 
-		if err := sendPushoverNotification(getNotificationTitle(), title); err != nil {
-			log.Printf("Failed to send notification: %v", err)
-			return c.Status(fiber.StatusInternalServerError).SendString("Failed to send notification")
+		notificationProvider := os.Getenv("NOTIFICATION_PROVIDER")
+
+		switch notificationProvider {
+		case "ntfy":
+			if err := sendNtfyNotification(getNotificationTitle(), title); err != nil {
+				log.Printf("Failed to send ntfy notification: %v", err)
+				return c.Status(fiber.StatusInternalServerError).SendString("Failed to send notification")
+			}
+
+		case "both":
+			if err := sendPushoverNotification(getNotificationTitle(), title); err != nil {
+				log.Printf("Failed to send pushover notification: %v", err)
+				return c.Status(fiber.StatusInternalServerError).SendString("Failed to send notification")
+			}
+
+			if err := sendNtfyNotification(getNotificationTitle(), title); err != nil {
+				log.Printf("Failed to send ntfy notification: %v", err)
+				return c.Status(fiber.StatusInternalServerError).SendString("Failed to send notification")
+			}
+
+		default:
+			if err := sendPushoverNotification(getNotificationTitle(), title); err != nil {
+				log.Printf("Failed to send notification: %v", err)
+				return c.Status(fiber.StatusInternalServerError).SendString("Failed to send notification")
+			}
 		}
 
 		log.Println("Notification sent successfully")

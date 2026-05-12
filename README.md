@@ -1,6 +1,6 @@
 ### notion_to_pushover
 
-Uses Notion WebHooks to send notifications using Pushover
+Uses Notion WebHooks to send notifications using Pushover or Ntfy
 
 #### docker-compose.yml
 ```yml
@@ -23,6 +23,10 @@ services:
 |------------------------------|-----------------------------------------------------------------------------------------|---------|
 | `PUSHOVER_USER_KEY`          | The key associated with your Pushover account.                                          | ✅      |
 | `PUSHOVER_API_TOKEN`         | The token associated with your Pushover application.                                    | ✅      |
-| `PUSHOVER_NOTIFICATION_TITLE`| What the title of the notification should be (defaults to `A new page has been added`.  | ❌      |
+| `PUSHOVER_NOTIFICATION_TITLE`| What the title of the notification should be (defaults to `A new page has been added`). | ❌      |
 | `NOTION_API_KEY`             | The API token associated with your Notion integration.                                  | ✅      |
 | `NOTION_VERIFICATION_TOKEN`  | The verification token sent when setting up your WebHook in Notion.                     | ✅      |
+| `NOTIFICATION_PROVIDER`      | Which provider to use (either `ntfy` or `both` default is Pushover)                     | ❌      |
+| `NTFY_SERVER`                | Server name for Ntfy                                                                    | ❌      |
+| `NTFY_TOPIC`                 | Topic name for Ntfy                                                                     | ❌      |
+| `NTFY_BEARER_TOKEN`          | Token for Ntfy                                                                          | ❌      |
